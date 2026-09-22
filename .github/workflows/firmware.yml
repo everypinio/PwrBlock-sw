@@ -11,7 +11,11 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+
+concurrency:
+  group: firmware-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -33,17 +37,25 @@ jobs:
 
           docker run --rm \
             --user "$(id -u):$(id -g)" \
+            -e GITHUB_REF_NAME \
+            -e GITHUB_REF_TYPE \
             -v "$PWD:/workspace" \
             -w /workspace \
             power_block-builder \
             bash -lc '
               set -euo pipefail
 
+              rm -rf dist
               mkdir -p dist
+              cmake_args=()
+
+              if [ "${GITHUB_REF_TYPE:-}" = "tag" ]; then
+                cmake_args+=("-DFIRMWARE_VERSION=${GITHUB_REF_NAME#v}")
+              fi
 
               for preset in release-tmc release-cdc; do
                 rm -rf build
-                cmake --preset "$preset"
+                cmake --preset "$preset" "${cmake_args[@]}"
                 cmake --build --preset "$preset" --parallel
 
                 for ext in elf hex bin map; do
@@ -52,6 +64,9 @@ jobs:
                   fi
                 done
               done
+
+              cd dist
+              sha256sum * > SHA256SUMS
             '
 
       - name: Upload firmware artifacts
@@ -60,9 +75,31 @@ jobs:
           name: power_block-firmware
           path: dist/*
           if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: Publish release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-24.04
+    permissions:
+      attestations: write
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Download firmware artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: power_block-firmware
+          path: dist
+
+      - name: Generate artifact attestation
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/*
 
       - name: Create GitHub Release
-        if: startsWith(github.ref, 'refs/tags/v')
         env:
           GH_TOKEN: ${{ github.token }}
           TAG_NAME: ${{ github.ref_name }}
@@ -72,7 +109,13 @@ jobs:
           if gh release view "$TAG_NAME" >/dev/null 2>&1; then
             gh release upload "$TAG_NAME" dist/* --clobber
           else
+            prerelease_args=()
+            if [[ "$TAG_NAME" == *-* ]]; then
+              prerelease_args+=(--prerelease)
+            fi
+
             gh release create "$TAG_NAME" dist/* \
               --title "$TAG_NAME" \
-              --generate-notes
+              --generate-notes \
+              "${prerelease_args[@]}"
           fi

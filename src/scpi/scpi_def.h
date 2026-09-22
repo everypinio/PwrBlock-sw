@@ -11,7 +11,12 @@ extern "C" {
 #define SCPI_IDN1                "EVERYPINIO"
 #define SCPI_IDN2                "POWERBLOCK"
 #define SCPI_IDN3                NULL
-#define SCPI_IDN4                "0.1"
+
+#ifndef FIRMWARE_VERSION
+#define FIRMWARE_VERSION "0.0.0-dev"
+#endif
+
+#define SCPI_IDN4 FIRMWARE_VERSION
 
 extern const scpi_command_t scpi_commands[];
 extern scpi_interface_t     scpi_interface;

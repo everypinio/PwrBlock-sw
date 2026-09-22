@@ -1,0 +1,31 @@
+changelog:
+  exclude:
+    labels:
+      - ignore-for-release
+    authors:
+      - dependabot[bot]
+  categories:
+    - title: Firmware
+      labels:
+        - firmware
+        - feature
+        - enhancement
+    - title: Fixes
+      labels:
+        - fix
+        - bug
+    - title: Hardware and compatibility
+      labels:
+        - hardware
+        - compatibility
+    - title: Documentation
+      labels:
+        - documentation
+    - title: Maintenance
+      labels:
+        - ci
+        - build
+        - dependencies
+    - title: Other changes
+      labels:
+        - "*"

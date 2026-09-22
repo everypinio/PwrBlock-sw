@@ -1,4 +1,8 @@
 cmake_minimum_required(VERSION 3.21.1)
+
+file(READ "${CMAKE_CURRENT_SOURCE_DIR}/VERSION" PWRBLOCK_VERSION)
+string(STRIP "${PWRBLOCK_VERSION}" PWRBLOCK_VERSION)
+
 project(
     power_block
     C
@@ -20,6 +24,13 @@ add_subdirectory(lib)
 # Main app
 add_executable(power_block)
 include_directories(power_block src)
+
+set(FIRMWARE_VERSION
+    "${PWRBLOCK_VERSION}"
+    CACHE STRING "Firmware version string"
+)
+message(STATUS "Firmware version: ${FIRMWARE_VERSION}")
+target_compile_definitions(power_block PRIVATE FIRMWARE_VERSION=\"${FIRMWARE_VERSION}\")
 
 add_subdirectory(src)
 
