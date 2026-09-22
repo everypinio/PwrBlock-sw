@@ -18,11 +18,18 @@ RUN apt-get update && \
 # Using toolchain version
 ARG ARM_TOOLCHAIN_VERSION="10.3-2021.10"
 ARG ARM_TOOLCHAIN_DIR="/opt/gcc-arm-none-eabi"
+ARG ARM_TOOLCHAIN_SHA256="97dbb4f019ad1650b732faffcc881689cedc14e2b7ee863d390e0a41ef16c9a3"
 
 # Download toolchain from official site
 # Extract all files to ARM_TOOLCHAIN_DIR
-RUN mkdir ${ARM_TOOLCHAIN_DIR} && \
-    wget -qO- "https://developer.arm.com/-/media/Files/downloads/gnu-rm/${ARM_TOOLCHAIN_VERSION}/gcc-arm-none-eabi-${ARM_TOOLCHAIN_VERSION}-x86_64-linux.tar.bz2" | tar -xvj -C ${ARM_TOOLCHAIN_DIR} --strip-components=1
+RUN archive="/tmp/gcc-arm-none-eabi-${ARM_TOOLCHAIN_VERSION}-x86_64-linux.tar.bz2" && \
+    wget --https-only --progress=dot:giga \
+        -O "${archive}" \
+        "https://developer.arm.com/-/media/Files/downloads/gnu-rm/${ARM_TOOLCHAIN_VERSION}/gcc-arm-none-eabi-${ARM_TOOLCHAIN_VERSION}-x86_64-linux.tar.bz2" && \
+    echo "${ARM_TOOLCHAIN_SHA256}  ${archive}" | sha256sum -c - && \
+    mkdir ${ARM_TOOLCHAIN_DIR} && \
+    tar -xvj -C ${ARM_TOOLCHAIN_DIR} --strip-components=1 -f "${archive}" && \
+    rm -f "${archive}"
 
 # Append binary folder to PATH env
 ENV PATH=$PATH:${ARM_TOOLCHAIN_DIR}/bin
