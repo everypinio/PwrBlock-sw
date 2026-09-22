@@ -2,14 +2,14 @@ FROM ubuntu:24.04
 
 # Download Linux support tools
 RUN apt-get update && \
-    apt-get clean && \ 
     apt-get install -y \
     sudo \
     build-essential \
     wget \
     cmake \
     git \
-    ninja-build
+    ninja-build && \
+    apt-get clean
 
 # Using toolchain version
 ARG ARM_TOOLCHAIN_VERSION="10.3-2021.10"

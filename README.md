@@ -48,6 +48,27 @@ Build configurations available:
 - Release (TMC mode) — optimized release build for a USBTMC device.
 - Release (CDC mode) — optimized release build for a CDC device (with extended WebUSB support).
 
+## CI and releases
+
+GitHub Actions builds the release firmware automatically inside the repository
+Docker image on pushes to `main` or `master`, on pull requests, and on manual
+workflow runs. The workflow builds both release presets:
+
+- `release-tmc`
+- `release-cdc`
+
+Build artifacts are uploaded as `power_block-firmware` and include generated
+`.elf`, `.hex`, `.bin`, and `.map` files.
+
+To publish a GitHub Release, create and push a version tag:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The tag workflow creates a release and attaches the firmware artifacts.
+
 Flash the firmware to the board via the `Flash` task in `Task Explorer` or from the command line:
 
 ```bash

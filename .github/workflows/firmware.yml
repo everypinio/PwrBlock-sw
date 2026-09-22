@@ -1,0 +1,78 @@
+name: Firmware
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - "v*"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build firmware
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build Docker image
+        run: docker build -t power_block-builder .
+
+      - name: Build release presets
+        run: |
+          set -euo pipefail
+
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -v "$PWD:/workspace" \
+            -w /workspace \
+            power_block-builder \
+            bash -lc '
+              set -euo pipefail
+
+              mkdir -p dist
+
+              for preset in release-tmc release-cdc; do
+                rm -rf build
+                cmake --preset "$preset"
+                cmake --build --preset "$preset" --parallel
+
+                for ext in elf hex bin map; do
+                  if [ -f "build/power_block.$ext" ]; then
+                    cp "build/power_block.$ext" "dist/power_block-${preset}.$ext"
+                  fi
+                done
+              done
+            '
+
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: power_block-firmware
+          path: dist/*
+          if-no-files-found: error
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            gh release upload "$TAG_NAME" dist/* --clobber
+          else
+            gh release create "$TAG_NAME" dist/* \
+              --title "$TAG_NAME" \
+              --generate-notes
+          fi
