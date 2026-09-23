@@ -18,8 +18,36 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  guard:
+    name: Validate version
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Tag must match VERSION
+        if: github.ref_type == 'tag'
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          ver="${TAG#v}"
+          core="${ver%%-*}"
+          file_ver="$(tr -d '[:space:]' < VERSION)"
+
+          if [[ "$core" != "$file_ver" ]]; then
+            echo "::error::Tag '$TAG' (core $core) does not match VERSION file ($file_ver). Bump VERSION first."
+            exit 1
+          fi
+
+          echo "Firmware version: $ver" >> "$GITHUB_STEP_SUMMARY"
+
   build:
     name: Build firmware
+    needs: guard
     runs-on: ubuntu-24.04
     timeout-minutes: 5
 
