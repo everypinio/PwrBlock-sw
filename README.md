@@ -51,7 +51,7 @@ Build configurations available:
 ## CI and releases
 
 GitHub Actions builds the release firmware automatically inside the repository
-Docker image on pushes to `main` or `master`, on pull requests, and on manual
+Docker image on pushes to `main`, on pull requests, and on manual
 workflow runs. The workflow builds both release presets:
 
 - `release-tmc`
