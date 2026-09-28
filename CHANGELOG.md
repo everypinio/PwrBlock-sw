@@ -7,6 +7,10 @@ This project uses semantic versioning with tags like `v0.1.0`. See
 
 ## Unreleased
 
+## v0.1.0
+
+Initial public test release.
+
 ### Added
 
 - GitHub Actions firmware build workflow.
@@ -22,9 +26,4 @@ This project uses semantic versioning with tags like `v0.1.0`. See
 
 - Firmware `*IDN?` version now comes from the build-time `FIRMWARE_VERSION`
   definition instead of a hardcoded SCPI value.
-- Release builds created from Git tags use the tag value without the leading
-  `v` as the firmware version.
-
-## 0.1.0
-
-Initial firmware release baseline.
+- Release builds created from Git tags use the tag value without the leading `v` as the firmware version.
