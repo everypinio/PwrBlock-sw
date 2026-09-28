@@ -87,9 +87,7 @@ jobs:
                 cmake --build --preset "$preset" --parallel
 
                 for ext in elf hex bin map; do
-                  if [ -f "build/power_block.$ext" ]; then
-                    cp "build/power_block.$ext" "dist/power_block-${preset}.$ext"
-                  fi
+                  cp "build/power_block.$ext" "dist/power_block-${preset}.$ext"
                 done
               done
 
