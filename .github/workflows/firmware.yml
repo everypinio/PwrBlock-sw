@@ -1,0 +1,153 @@
+name: Firmware
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: firmware-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  guard:
+    name: Validate version
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Tag must match VERSION
+        if: github.ref_type == 'tag'
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          ver="${TAG#v}"
+          core="${ver%%-*}"
+          file_ver="$(tr -d '[:space:]' < VERSION)"
+
+          if [[ "$core" != "$file_ver" ]]; then
+            echo "::error::Tag '$TAG' (core $core) does not match VERSION file ($file_ver). Bump VERSION first."
+            exit 1
+          fi
+
+          echo "Firmware version: $ver" >> "$GITHUB_STEP_SUMMARY"
+
+  build:
+    name: Build firmware
+    needs: guard
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Build Docker image
+        run: docker build -t power_block-builder .
+
+      - name: Build release presets
+        run: |
+          set -euo pipefail
+
+          docker run --rm \
+            --user "$(id -u):$(id -g)" \
+            -e GITHUB_REF_NAME \
+            -e GITHUB_REF_TYPE \
+            -v "$PWD:/workspace" \
+            -w /workspace \
+            power_block-builder \
+            bash -lc '
+              set -euo pipefail
+
+              rm -rf dist
+              mkdir -p dist
+              cmake_args=()
+
+              if [ "${GITHUB_REF_TYPE:-}" = "tag" ]; then
+                cmake_args+=("-DFIRMWARE_VERSION=${GITHUB_REF_NAME#v}")
+              fi
+
+              for preset in release-tmc release-cdc; do
+                rm -rf build
+                cmake --preset "$preset" "${cmake_args[@]}"
+                cmake --build --preset "$preset" --parallel
+
+                for ext in elf hex bin map; do
+                  cp "build/power_block.$ext" "dist/power_block-${preset}.$ext"
+                done
+              done
+
+              cd dist
+              sha256sum * > SHA256SUMS
+            '
+
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: power_block-firmware
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 30
+
+  release:
+    name: Publish release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      attestations: write
+      contents: write
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Download firmware artifacts
+        uses: actions/download-artifact@v8
+        with:
+          name: power_block-firmware
+          path: dist
+
+      - name: Generate artifact attestation
+        uses: actions/attest@v4
+        with:
+          subject-path: dist/*
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG_NAME: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+
+          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
+            gh release upload "$TAG_NAME" dist/* --clobber
+          else
+            prerelease_args=()
+            if [[ "$TAG_NAME" == *-* ]]; then
+              prerelease_args+=(--prerelease)
+            fi
+
+            gh release create "$TAG_NAME" dist/* \
+              --title "$TAG_NAME" \
+              --generate-notes \
+              "${prerelease_args[@]}"
+          fi

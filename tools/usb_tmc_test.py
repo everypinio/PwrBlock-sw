@@ -3,12 +3,16 @@
 import pyvisa
 import time
 import sys
+from pathlib import Path
+
+
+FIRMWARE_VERSION = (Path(__file__).resolve().parents[1] / "VERSION").read_text().strip()
 
 
 def test_idn():
     idn = inst.query("*idn?")
     print(f"ID: {idn}")
-    assert idn == "EVERYPINIO,POWERBLOCK,0,0.1\r\n"
+    assert idn == f"EVERYPINIO,POWERBLOCK,0,{FIRMWARE_VERSION}\r\n"
     assert inst.is_4882_compliant
 
 
