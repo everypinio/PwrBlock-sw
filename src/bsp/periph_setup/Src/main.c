@@ -54,7 +54,7 @@ SPI_HandleTypeDef hspi1;
 TIM_HandleTypeDef htim4;
 DMA_HandleTypeDef hdma_tim4_ch2;
 
-UART_HandleTypeDef huart5;
+UART_HandleTypeDef huart3;
 
 PCD_HandleTypeDef hpcd_USB_DRD_FS;
 
@@ -74,7 +74,7 @@ static void MX_SPI1_Init(void);
 static void MX_TIM4_Init(void);
 static void MX_UCPD1_Init(void);
 static void MX_USB_DRD_FS_PCD_Init(void);
-static void MX_USART5_UART_Init(void);
+static void MX_USART3_UART_Init(void);
 
 /* USER CODE BEGIN PFP */
 
@@ -125,7 +125,7 @@ int main(void)
     MX_TIM4_Init();
     MX_UCPD1_Init();
     MX_USB_DRD_FS_PCD_Init();
-    MX_USART5_UART_Init();
+    MX_USART3_UART_Init();
     /* USER CODE BEGIN 2 */
 
     // Enable DAC_CH1
@@ -564,37 +564,48 @@ static void MX_UCPD1_Init(void)
 }
 
 /**
- * @brief USART5 Initialization Function
+ * @brief USART3 Initialization Function
  * @param None
  * @retval None
  */
-static void MX_USART5_UART_Init(void)
+static void MX_USART3_UART_Init(void)
 {
 
-    /* USER CODE BEGIN USART5_Init 0 */
+    /* USER CODE BEGIN USART3_Init 0 */
 
-    /* USER CODE END USART5_Init 0 */
+    /* USER CODE END USART3_Init 0 */
 
-    /* USER CODE BEGIN USART5_Init 1 */
+    /* USER CODE BEGIN USART3_Init 1 */
 
-    /* USER CODE END USART5_Init 1 */
-    huart5.Instance                    = USART5;
-    huart5.Init.BaudRate               = 115200;
-    huart5.Init.WordLength             = UART_WORDLENGTH_8B;
-    huart5.Init.StopBits               = UART_STOPBITS_1;
-    huart5.Init.Parity                 = UART_PARITY_NONE;
-    huart5.Init.Mode                   = UART_MODE_TX_RX;
-    huart5.Init.HwFlowCtl              = UART_HWCONTROL_NONE;
-    huart5.Init.OverSampling           = UART_OVERSAMPLING_16;
-    huart5.Init.OneBitSampling         = UART_ONE_BIT_SAMPLE_DISABLE;
-    huart5.Init.ClockPrescaler         = UART_PRESCALER_DIV1;
-    huart5.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-    if (HAL_UART_Init(&huart5) != HAL_OK) {
+    /* USER CODE END USART3_Init 1 */
+    huart3.Instance                    = USART3;
+    huart3.Init.BaudRate               = 115200;
+    huart3.Init.WordLength             = UART_WORDLENGTH_8B;
+    huart3.Init.StopBits               = UART_STOPBITS_1;
+    huart3.Init.Parity                 = UART_PARITY_NONE;
+    huart3.Init.Mode                   = UART_MODE_TX_RX;
+    huart3.Init.HwFlowCtl              = UART_HWCONTROL_NONE;
+    huart3.Init.OverSampling           = UART_OVERSAMPLING_16;
+    huart3.Init.OneBitSampling         = UART_ONE_BIT_SAMPLE_DISABLE;
+    huart3.Init.ClockPrescaler         = UART_PRESCALER_DIV1;
+    huart3.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+    if (HAL_UART_Init(&huart3) != HAL_OK) {
         Error_Handler();
     }
-    /* USER CODE BEGIN USART5_Init 2 */
+    if (HAL_UARTEx_SetTxFifoThreshold(&huart3, UART_TXFIFO_THRESHOLD_1_8) !=
+        HAL_OK) {
+        Error_Handler();
+    }
+    if (HAL_UARTEx_SetRxFifoThreshold(&huart3, UART_RXFIFO_THRESHOLD_1_8) !=
+        HAL_OK) {
+        Error_Handler();
+    }
+    if (HAL_UARTEx_DisableFifoMode(&huart3) != HAL_OK) {
+        Error_Handler();
+    }
+    /* USER CODE BEGIN USART3_Init 2 */
 
-    /* USER CODE END USART5_Init 2 */
+    /* USER CODE END USART3_Init 2 */
 }
 
 /**
@@ -681,13 +692,11 @@ static void MX_GPIO_Init(void)
     /*Configure GPIO pin Output Level */
     HAL_GPIO_WritePin(GPIOB, USB_SW1_Pin | USB_SW2_Pin, GPIO_PIN_SET);
 
-    /*Configure GPIO pins : USART_TRACE_RX_Pin USART_TRACE_TX_Pin */
-    GPIO_InitStruct.Pin       = USART_TRACE_RX_Pin | USART_TRACE_TX_Pin;
-    GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull      = GPIO_NOPULL;
-    GPIO_InitStruct.Speed     = GPIO_SPEED_FREQ_LOW;
-    GPIO_InitStruct.Alternate = GPIO_AF4_USART3;
-    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    /*Configure GPIO pins : IO7_Pin IO6_Pin IO5_Pin */
+    GPIO_InitStruct.Pin  = IO7_Pin | IO6_Pin | IO5_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
     /*Configure GPIO pin : BUTTON_Pin */
     GPIO_InitStruct.Pin  = BUTTON_Pin;
@@ -720,6 +729,12 @@ static void MX_GPIO_Init(void)
     GPIO_InitStruct.Pull  = GPIO_NOPULL;
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
     HAL_GPIO_Init(INA_SPI_NSS_GPIO_Port, &GPIO_InitStruct);
+
+    /*Configure GPIO pins : IO1_Pin IO2_Pin IO3_Pin IO4_Pin */
+    GPIO_InitStruct.Pin  = IO1_Pin | IO2_Pin | IO3_Pin | IO4_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    HAL_GPIO_Init(GPIOD, &GPIO_InitStruct);
 
     /*Configure GPIO pin : DTRK_PWM_Pin */
     GPIO_InitStruct.Pin       = DTRK_PWM_Pin;

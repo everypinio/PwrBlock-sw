@@ -43,3 +43,15 @@ List of supported SCPI commands:
   - `CALibration:CURRent:OFFSet {<Offset>}` - sets the offset of the linear approximation for the current setpoint function. The `Offset` parameter is in mA.
   - `CALibration:CURRent:OFFSet?` - query for the current offset of the linear approximation for the current setpoint function, in mA.
   - `CALibration:STORe` - command to save the current values of all calibration constants to non-volatile memory.
+- Digital I/O (GPIO) control:
+  - `<n>` - pin number, 1 to the value returned by `[SOURce]:DIGital:COUNt?`; if omitted, pin 1 is used. Pin `<n>` corresponds to the IO`<n>` label on the external connector.
+  - `[SOURce]:DIGital:COUNt?` - query for the number of GPIO pins, example output "7".
+  - `[SOURce]:DIGital:PIN<n>:FUNCtion?` - query for the current pin owner, example output "GPIO". Every bus is wired to its own dedicated pins, so IO1 - IO7 are always GPIO and the reply is always "GPIO".
+  - `[SOURce]:DIGital:PIN<n>:DIRection {INPut | OUTPut}` - sets the pin direction. Default is INPut.
+  - `[SOURce]:DIGital:PIN<n>:DIRection?` - pin direction query.
+  - `[SOURce]:DIGital:PIN<n>:MODE {PUSHpull | ODRain}` - sets the output driver type: push-pull or open-drain. Default is PUSHpull.
+  - `[SOURce]:DIGital:PIN<n>:MODE?` - output driver type query.
+  - `[SOURce]:DIGital:PIN<n>:PULL {NONE | UP | DOWN}` - sets the internal pull resistor. Default is NONE.
+  - `[SOURce]:DIGital:PIN<n>:PULL?` - internal pull resistor query.
+  - `[SOURce]:DIGital:PIN<n>[:LEVel] {OFF | ON | 0 | 1}` - sets the output level of the pin. For an input pin, the value is stored and applied when the pin is switched to output.
+  - `[SOURce]:DIGital:PIN<n>[:LEVel]?` - query for the actual level on the pin (for both input and output pins), example output "1".

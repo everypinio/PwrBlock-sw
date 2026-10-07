@@ -78,3 +78,4 @@ target_sources(
             scpi_parser/libscpi/src/utils.c
 )
 target_include_directories(scpi_parser SYSTEM PUBLIC scpi_parser/libscpi/inc)
+target_compile_definitions(scpi_parser PUBLIC USE_FULL_ERROR_LIST=1)

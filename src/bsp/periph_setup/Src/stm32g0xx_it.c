@@ -66,7 +66,7 @@ extern ADC_HandleTypeDef  hadc1;
 extern I2C_HandleTypeDef  hi2c1;
 extern SPI_HandleTypeDef  hspi1;
 extern DMA_HandleTypeDef  hdma_tim4_ch2;
-extern UART_HandleTypeDef huart5;
+extern UART_HandleTypeDef huart3;
 extern PCD_HandleTypeDef  hpcd_USB_DRD_FS;
 extern TIM_HandleTypeDef  htim2;
 
@@ -273,7 +273,7 @@ void USART3_4_5_6_LPUART1_IRQHandler(void)
     /* USER CODE BEGIN USART3_4_5_6_LPUART1_IRQn 0 */
 
     /* USER CODE END USART3_4_5_6_LPUART1_IRQn 0 */
-    HAL_UART_IRQHandler(&huart5);
+    HAL_UART_IRQHandler(&huart3);
     /* USER CODE BEGIN USART3_4_5_6_LPUART1_IRQn 1 */
 #ifdef _TRACE
     TRACER_EMB_IRQHandlerUSART();
