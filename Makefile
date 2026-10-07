@@ -27,7 +27,7 @@ format:
 	find ./src -iname '*.h' -o -iname '*.c' | clang-format --style=file -i --files=/dev/stdin
 
 cube_remove_extras:
-	rm -rf src/bsp/periph_setup/cmake src/bsp/periph_setup/CMakePresets.json src/bsp/periph_setup/STM32G0B1XX_FLASH.ld
+	rm -rf src/bsp/periph_setup/cmake src/bsp/periph_setup/CMakePresets.json src/bsp/periph_setup/STM32G0B1*.ld
 
 # List of source files to lint limited to src directory
 LINT_FILES_LIST := $(shell find src/ -name "*.c")

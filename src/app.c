@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+#include "bsp/drivers/ext_conn/digital_gpio.h"
+#include "bsp/drivers/ext_conn/i2c_bus.h"
 #include "cmsis_os2.h"
 #include "middleware/adc_mgr/adc_mgr.h"
 #include "middleware/i2c_mgr/i2c_mgr.h"
@@ -23,6 +25,8 @@ int app(void)
 {
     i2c_manager_init();
     adc_manager_init();
+    digital_gpio_init();
+    i2c_bus_init();
 
     thread_usbpd_init();
     thread_usbtmc_init();

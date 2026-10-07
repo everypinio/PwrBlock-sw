@@ -1,5 +1,8 @@
 #include "scpi_def.h"
 #include "control/control.h"
+#include "scpi/bus_format.h"
+#include "scpi/ext_conn/digital_ctl.h"
+#include "scpi/ext_conn/i2c_ctl.h"
 #include "scpi/scpi.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -232,6 +235,84 @@ const scpi_command_t scpi_commands[] = {
      .callback = SCPI_CalibrationCurrentOffsetQ},
     {.pattern = "CALibration:STORe", .callback = SCPI_CalibrationStore},
 
+    /* DIGital subsystem */
+    {
+     .pattern  = "[SOURce]:DIGital:COUNt?",
+     .callback = SCPI_DigitalCountQ,
+     },
+    {
+     .pattern  = "[SOURce]:DIGital:PIN#:FUNCtion?",
+     .callback = SCPI_DigitalPinFunctionQ,
+     },
+    {
+     .pattern  = "[SOURce]:DIGital:PIN#:DIRection",
+     .callback = SCPI_DigitalPinDirection,
+     },
+    {
+     .pattern  = "[SOURce]:DIGital:PIN#:DIRection?",
+     .callback = SCPI_DigitalPinDirectionQ,
+     },
+    {
+     .pattern  = "[SOURce]:DIGital:PIN#:MODE",
+     .callback = SCPI_DigitalPinMode,
+     },
+    {
+     .pattern  = "[SOURce]:DIGital:PIN#:MODE?",
+     .callback = SCPI_DigitalPinModeQ,
+     },
+    {
+     .pattern  = "[SOURce]:DIGital:PIN#:PULL",
+     .callback = SCPI_DigitalPinPull,
+     },
+    {
+     .pattern  = "[SOURce]:DIGital:PIN#:PULL?",
+     .callback = SCPI_DigitalPinPullQ,
+     },
+    {
+     .pattern  = "[SOURce]:DIGital:PIN#[:LEVel]",
+     .callback = SCPI_DigitalPinLevel,
+     },
+    {
+     .pattern  = "[SOURce]:DIGital:PIN#[:LEVel]?",
+     .callback = SCPI_DigitalPinLevelQ,
+     },
+
+    /* FORMat subsystem */
+    {
+     .pattern  = "FORMat[:DATA]",
+     .callback = SCPI_BusFormat,
+     },
+    {
+     .pattern  = "FORMat[:DATA]?",
+     .callback = SCPI_BusFormatQ,
+     },
+
+    /* BUS subsystem */
+    {
+     .pattern  = "BUS:I2C:STATe",
+     .callback = SCPI_I2cState,
+     },
+    {
+     .pattern  = "BUS:I2C:STATe?",
+     .callback = SCPI_I2cStateQ,
+     },
+    {
+     .pattern  = "BUS:I2C:ADDRess:WIDTh",
+     .callback = SCPI_I2cAddressWidth,
+     },
+    {
+     .pattern  = "BUS:I2C:ADDRess:WIDTh?",
+     .callback = SCPI_I2cAddressWidthQ,
+     },
+    {
+     .pattern  = "BUS:I2C:WRITe",
+     .callback = SCPI_I2cWrite,
+     },
+    {
+     .pattern  = "BUS:I2C:READ?",
+     .callback = SCPI_I2cReadQ,
+     },
+
     SCPI_CMD_LIST_END
 };
 
@@ -284,5 +365,10 @@ scpi_result_t SCPI_Control(
 scpi_result_t SCPI_Reset(scpi_t* context)
 {
     (void)context;
+
+    SCPI_DigitalReset(context);
+    SCPI_BusFormatReset(context);
+    SCPI_I2cReset(context);
+
     return SCPI_RES_OK;
 }

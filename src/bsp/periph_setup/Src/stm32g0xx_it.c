@@ -25,6 +25,8 @@
 #include <device/usbd.h>
 #include <usbpd_hw_if.h>
 
+#include "bsp/drivers/ext_conn/i2c_bus_it.h"
+
 // UCPD Trace module
 #ifdef _TRACE
 #include <tracer_emb.h>
@@ -64,9 +66,10 @@
 /* External variables --------------------------------------------------------*/
 extern ADC_HandleTypeDef  hadc1;
 extern I2C_HandleTypeDef  hi2c1;
+extern I2C_HandleTypeDef  hi2c2;
 extern SPI_HandleTypeDef  hspi1;
 extern DMA_HandleTypeDef  hdma_tim4_ch2;
-extern UART_HandleTypeDef huart5;
+extern UART_HandleTypeDef huart3;
 extern PCD_HandleTypeDef  hpcd_USB_DRD_FS;
 extern TIM_HandleTypeDef  htim2;
 
@@ -251,6 +254,26 @@ void I2C1_IRQHandler(void)
 }
 
 /**
+ * @brief This function handles I2C2, I2C3 Interrupt (combined with EXTI 24 and
+ * EXTI 22).
+ */
+void I2C2_3_IRQHandler(void)
+{
+    /* USER CODE BEGIN I2C2_3_IRQn 0 */
+
+    /* USER CODE END I2C2_3_IRQn 0 */
+    if (hi2c2.Instance->ISR & (I2C_FLAG_BERR | I2C_FLAG_ARLO | I2C_FLAG_OVR)) {
+        HAL_I2C_ER_IRQHandler(&hi2c2);
+    }
+    else {
+        HAL_I2C_EV_IRQHandler(&hi2c2);
+    }
+    /* USER CODE BEGIN I2C2_3_IRQn 1 */
+    i2c_bus_irq_handler();
+    /* USER CODE END I2C2_3_IRQn 1 */
+}
+
+/**
  * @brief This function handles SPI1/I2S1 Interrupt.
  */
 void SPI1_IRQHandler(void)
@@ -273,7 +296,7 @@ void USART3_4_5_6_LPUART1_IRQHandler(void)
     /* USER CODE BEGIN USART3_4_5_6_LPUART1_IRQn 0 */
 
     /* USER CODE END USART3_4_5_6_LPUART1_IRQn 0 */
-    HAL_UART_IRQHandler(&huart5);
+    HAL_UART_IRQHandler(&huart3);
     /* USER CODE BEGIN USART3_4_5_6_LPUART1_IRQn 1 */
 #ifdef _TRACE
     TRACER_EMB_IRQHandlerUSART();

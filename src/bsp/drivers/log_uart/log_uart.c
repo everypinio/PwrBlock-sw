@@ -18,8 +18,8 @@
 
 #include <stm32g0xx_hal.h>
 
-extern UART_HandleTypeDef  huart5;
-static UART_HandleTypeDef* uart_log = &huart5;
+extern UART_HandleTypeDef  huart3;
+static UART_HandleTypeDef* uart_log = &huart3;
 
 int log_uart_write(const uint8_t* buf, uint16_t len)
 {
