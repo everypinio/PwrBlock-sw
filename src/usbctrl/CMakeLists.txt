@@ -19,4 +19,4 @@ else()
     )
 endif()
 
-target_sources(usbctrl INTERFACE tud_app.c tud_task.c)
+target_sources(usbctrl INTERFACE tud_app.c tud_task.c usbctl.c)

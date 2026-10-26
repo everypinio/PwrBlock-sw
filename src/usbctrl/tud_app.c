@@ -68,11 +68,8 @@ void tud_umount_cb(void)
 void tud_suspend_cb(bool remote_wakeup_en)
 {
     (void)remote_wakeup_en;
-    sys_status_set(SYS_STATUS_SRC_USBCTRL, SYS_STATUS_OFF);
+    sys_status_set(SYS_STATUS_SRC_USBCTRL, SYS_STATUS_BUSY);
 }
 
 // Invoked when usb bus is resumed
-void tud_resume_cb(void)
-{
-    sys_status_set(SYS_STATUS_SRC_USBCTRL, SYS_STATUS_OK);
-}
+void tud_resume_cb(void) {}

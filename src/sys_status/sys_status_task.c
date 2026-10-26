@@ -106,6 +106,10 @@ static void on_change_usbtmc_status(void)
             led_app_set_off(INDICATION_USB);
             break;
         }
+        case SYS_STATUS_BUSY: {
+            led_app_set_constrain(INDICATION_USB);
+            break;
+        }
         case SYS_STATUS_OK: {
             led_app_set_norm(INDICATION_USB);
             break;

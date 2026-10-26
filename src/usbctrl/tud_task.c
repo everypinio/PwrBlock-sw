@@ -46,12 +46,15 @@
 #include <tusb.h>
 
 #include "scpi/scpi_def.h"
+#include "usbctl.h"
 
 #ifdef USB_MODE_TMC
 #include "usbtmc/usbtmc_app.h"
 #elif USB_MODE_CDC
 #include "usbcdc/usbcdc_app.h"
 #endif
+
+#define USBCTL_POLL_MS (100U)
 
 void tud_app_task(void* argument)
 {
@@ -61,10 +64,13 @@ void tud_app_task(void* argument)
     tusb_rhport_init_t dev_init = {
         .role = TUSB_ROLE_DEVICE, .speed = TUSB_SPEED_AUTO
     };
+
+    usbctl_init();
     tusb_init(BOARD_TUD_RHPORT, &dev_init);
 
     while (true) {
-        tud_task();
+        tud_task_ext(USBCTL_POLL_MS, false);
+        usbctl_task_iter();
     }
 }
 

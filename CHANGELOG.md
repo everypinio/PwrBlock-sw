@@ -7,6 +7,10 @@ This project uses semantic versioning with tags like `v0.1.0`. See
 
 ## Unreleased
 
+### Added
+
+- USB host port selection: PLD by default, PC when PC VBUS is present.
+
 ## v0.1.0
 
 Initial public test release.
