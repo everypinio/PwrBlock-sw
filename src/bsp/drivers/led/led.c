@@ -25,7 +25,7 @@ void led_init(void)
     ws2812b_init();
 }
 
-void led_set(uint32_t pos, LedColor color)
+void led_set(LedName name, LedColor color)
 {
     Ws2812Color ws_color;
     switch (color) {
@@ -67,5 +67,5 @@ void led_set(uint32_t pos, LedColor color)
         }
     }
 
-    ws2812b_set_led(pos, &ws_color);
+    ws2812b_set_led(name, &ws_color);
 }

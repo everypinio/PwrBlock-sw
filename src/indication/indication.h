@@ -16,17 +16,9 @@
 
 #pragma once
 
+#include "bsp/drivers/led/led_def.h"
+
 #include <stdint.h>
-
-typedef enum
-{
-    INDICATION_USB = 0,
-    INDICATION_USR,
-    INDICATION_OUT,
-    INDICATION_IN,
-
-    INDICATION_LED_NUM
-} IndicationLedName;
 
 typedef enum
 {
@@ -50,7 +42,7 @@ void indication_init(void);
  * @param name Naming of led in system.
  * @param state State to be set.
  */
-void indication_set_state(IndicationLedName name, IndicationState state);
+void indication_set_state(LedName name, IndicationState state);
 
 /**
  * @brief Update indication system (render led states).

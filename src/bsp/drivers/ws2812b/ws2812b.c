@@ -17,7 +17,7 @@
 #include "ws2812b.h"
 #include "ws2812b_conf.h"
 
-#include "main.h"
+#include <stm32g0xx_hal.h>
 
 extern TIM_HandleTypeDef WS2812B_TIMER;
 

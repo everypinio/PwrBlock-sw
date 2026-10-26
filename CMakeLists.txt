@@ -32,6 +32,10 @@ set(FIRMWARE_VERSION
 message(STATUS "Firmware version: ${FIRMWARE_VERSION}")
 target_compile_definitions(power_block PRIVATE FIRMWARE_VERSION=\"${FIRMWARE_VERSION}\")
 
+if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+    target_compile_definitions(power_block PRIVATE DEBUG)
+endif()
+
 add_subdirectory(src)
 
 # Add extra config for hex/bin/list files generation

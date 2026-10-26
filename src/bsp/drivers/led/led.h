@@ -16,7 +16,7 @@
 
 #pragma once
 
-#include <stdint.h>
+#include "led_def.h"
 
 typedef enum
 {
@@ -37,7 +37,7 @@ void led_init(void);
 /**
  * @brief Set color for led.
  *
- * @param pos Address of led (in a row).
+ * @param name Led to set.
  * @param color Color to set.
  */
-void led_set(uint32_t pos, LedColor color);
+void led_set(LedName name, LedColor color);

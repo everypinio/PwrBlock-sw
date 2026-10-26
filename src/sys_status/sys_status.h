@@ -32,7 +32,8 @@ typedef enum
     SYS_STATUS_CV,
     SYS_STATUS_CC,
     SYS_STATUS_FAULT,
-    SYS_STATUS_OK
+    SYS_STATUS_OK,
+    SYS_STATUS_BUSY
 } SysStatus;
 
 /**

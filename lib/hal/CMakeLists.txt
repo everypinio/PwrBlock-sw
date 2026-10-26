@@ -30,6 +30,7 @@ target_sources(
               stm32g0xx_hal_driver/Src/stm32g0xx_hal_spi.c
               stm32g0xx_hal_driver/Src/stm32g0xx_hal_i2c.c
               stm32g0xx_hal_driver/Src/stm32g0xx_hal_i2c_ex.c
+              stm32g0xx_hal_driver/Src/stm32g0xx_hal_iwdg.c
               stm32g0xx_hal_driver/Src/stm32g0xx_hal_pcd.c
               stm32g0xx_hal_driver/Src/stm32g0xx_hal_pcd_ex.c
               stm32g0xx_hal_driver/Src/stm32g0xx_hal_dac.c

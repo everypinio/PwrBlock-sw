@@ -36,18 +36,18 @@ typedef struct
     bool             is_on;
 } IndicationLed;
 
-static IndicationLed leds[INDICATION_LED_NUM];
+static IndicationLed leds[LED_NUM];
 
 void indication_init(void)
 {
     led_init();
 
-    for (uint32_t i = 0; i < INDICATION_LED_NUM; i++) {
+    for (uint32_t i = 0; i < LED_NUM; i++) {
         indication_set_state(i, INDICATION_STATE_OFF);
     }
 }
 
-void indication_set_state(IndicationLedName name, IndicationState state)
+void indication_set_state(LedName name, IndicationState state)
 {
     switch (state) {
         case INDICATION_STATE_OFF: {
@@ -100,7 +100,7 @@ void indication_set_state(IndicationLedName name, IndicationState state)
 
 void indication_update(uint32_t ticks)
 {
-    for (uint32_t i = 0; i < INDICATION_LED_NUM; i++) {
+    for (uint32_t i = 0; i < LED_NUM; i++) {
         IndicationLed* led_i = &leds[i];
 
         switch (led_i->effect) {

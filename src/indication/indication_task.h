@@ -25,39 +25,39 @@ void led_app_task(void* argument);
  *
  * @param led_name Naming of led in system.
  */
-void led_app_set_off(IndicationLedName led_name);
+void led_app_set_off(LedName led_name);
 
 /**
  * @brief Command to indication to set led in Normal state.
  *
  * @param led_name Naming of led in system.
  */
-void led_app_set_norm(IndicationLedName led_name);
+void led_app_set_norm(LedName led_name);
 
 /**
  * @brief Command to indication to set led in Action state.
  *
  * @param led_name Naming of led in system.
  */
-void led_app_set_act(IndicationLedName led_name);
+void led_app_set_act(LedName led_name);
 
 /**
  * @brief Command to indication to set led in Constrain state.
  *
  * @param led_name Naming of led in system.
  */
-void led_app_set_constrain(IndicationLedName led_name);
+void led_app_set_constrain(LedName led_name);
 
 /**
  * @brief Command to indication to set led in Warning state.
  *
  * @param led_name Naming of led in system.
  */
-void led_app_set_warning(IndicationLedName led_name);
+void led_app_set_warning(LedName led_name);
 
 /**
  * @brief Command to indication to set led in Alarm state.
  *
  * @param led_name Naming of led in system.
  */
-void led_app_set_alarm(IndicationLedName led_name);
+void led_app_set_alarm(LedName led_name);

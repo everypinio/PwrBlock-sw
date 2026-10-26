@@ -103,15 +103,19 @@ static void on_change_usbtmc_status(void)
     // Proecess status for USB led
     switch (sys_status[SYS_STATUS_SRC_USBCTRL].status) {
         case SYS_STATUS_OFF: {
-            led_app_set_off(INDICATION_USB);
+            led_app_set_off(LED_USB);
+            break;
+        }
+        case SYS_STATUS_BUSY: {
+            led_app_set_constrain(LED_USB);
             break;
         }
         case SYS_STATUS_OK: {
-            led_app_set_norm(INDICATION_USB);
+            led_app_set_norm(LED_USB);
             break;
         }
         case SYS_STATUS_FAULT: {
-            led_app_set_alarm(INDICATION_USB);
+            led_app_set_alarm(LED_USB);
             break;
         }
         default: break;
@@ -123,24 +127,24 @@ static void on_change_regulator_status(void)
     // Process status for OUT led
     // Check monitor current status
     if (sys_status[SYS_STATUS_SRC_MONITOR].status == SYS_STATUS_FAULT) {
-        led_app_set_alarm(INDICATION_OUT);
+        led_app_set_alarm(LED_OUT);
     }
     else {
         switch (sys_status[SYS_STATUS_SRC_REGULATOR].status) {
             case SYS_STATUS_OFF: {
-                led_app_set_off(INDICATION_OUT);
+                led_app_set_off(LED_OUT);
                 break;
             }
             case SYS_STATUS_CC: {
-                led_app_set_warning(INDICATION_OUT);
+                led_app_set_warning(LED_OUT);
                 break;
             }
             case SYS_STATUS_CV: {
-                led_app_set_norm(INDICATION_OUT);
+                led_app_set_norm(LED_OUT);
                 break;
             }
             case SYS_STATUS_FAULT: {
-                led_app_set_alarm(INDICATION_OUT);
+                led_app_set_alarm(LED_OUT);
                 break;
             }
             default: break;
@@ -152,7 +156,7 @@ static void on_change_monitor_status(void)
 {
     // Process status for OUT led
     if (sys_status[SYS_STATUS_SRC_MONITOR].status == SYS_STATUS_FAULT) {
-        led_app_set_alarm(INDICATION_OUT);
+        led_app_set_alarm(LED_OUT);
     }
     else {
         // Update with current regulator state
@@ -165,15 +169,15 @@ static void on_change_pwr_in_status(void)
     // Proecess status for IN led
     switch (sys_status[SYS_STATUS_SRC_PWR_IN].status) {
         case SYS_STATUS_OFF: {
-            led_app_set_off(INDICATION_IN);
+            led_app_set_off(LED_IN);
             break;
         }
         case SYS_STATUS_OK: {
-            led_app_set_norm(INDICATION_IN);
+            led_app_set_norm(LED_IN);
             break;
         }
         case SYS_STATUS_FAULT: {
-            led_app_set_alarm(INDICATION_IN);
+            led_app_set_alarm(LED_IN);
             break;
         }
         default: break;

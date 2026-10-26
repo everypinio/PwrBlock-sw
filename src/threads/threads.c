@@ -15,6 +15,7 @@
  */
 
 #include "threads.h"
+#include "bsp/drivers/wdg/hw_wdg.h"
 #include "threads_def.h"
 
 #include "button/button_task.h"
@@ -194,4 +195,9 @@ void vApplicationGetTimerTaskMemory(
       Note that, as the array is necessarily of type StackType_t,
       configTIMER_TASK_STACK_DEPTH is specified in words, not bytes. */
     *pulTimerTaskStackSize = configTIMER_TASK_STACK_DEPTH;
+}
+
+void vApplicationIdleHook(void)
+{
+    hw_wdg_feed();
 }
